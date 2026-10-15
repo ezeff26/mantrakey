@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>နိုင်ငံသားကီး</title>
+<meta name="description" content="မြန်မာစာ ရိုက်နည်း တော်လှန်ရေး စတင်ပါပြီ။ မကြာမီ လာမည်။">
+<link rel="icon" href="images/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #0b1a3a;
+    --bg2: #12306b;
+    --yellow: #fecb00;
+    --green: #34b233;
+    --red: #ea2839;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.72);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Noto Sans Myanmar', 'Myanmar Text', 'Padauk', sans-serif;
+    background: radial-gradient(ellipse at 50% 30%, var(--bg2) 0%, var(--bg1) 70%);
+    background-color: var(--bg1);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    line-height: 1.9;
+  }
+  .stripe {
+    height: 6px;
+    background: linear-gradient(90deg, var(--yellow) 0 33.3%, var(--green) 33.3% 66.6%, var(--red) 66.6% 100%);
+  }
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 16px;
+    gap: 28px;
+  }
+  .logo {
+    width: 112px;
+    height: 112px;
+    filter: drop-shadow(0 0 24px rgba(0,174,239,0.55));
+    animation: float 4s ease-in-out infinite;
+  }
+  .badge {
+    display: inline-block;
+    padding: 6px 20px;
+    border: 1px solid var(--yellow);
+    border-radius: 999px;
+    color: var(--yellow);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  h1 {
+    font-size: clamp(1.9rem, 6vw, 3.6rem);
+    font-weight: 900;
+    line-height: 1.7;
+    max-width: 900px;
+  }
+  h1 .hl { color: var(--yellow); }
+  .sub {
+    font-size: clamp(1.05rem, 2.6vw, 1.4rem);
+    color: var(--muted);
+    max-width: 640px;
+  }
+  .soon {
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--yellow), var(--green), var(--red), var(--yellow));
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 6s linear infinite;
+  }
+  .name {
+    font-size: 1.1rem;
+    color: var(--muted);
+  }
+  .name strong { color: var(--text); }
+  footer {
+    text-align: center;
+    padding: 20px 16px 28px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+  }
+  footer a { color: rgba(255,255,255,0.65); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+  @keyframes shine { to { background-position: 300% 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .logo, .badge, .soon { animation: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="stripe"></div>
+  <main>
+    <img class="logo" src="images/logo.png" alt="နိုင်ငံသားကီး">
+    <span class="badge">မကြာမီ လာမည်</span>
+    <h1>မြန်မာစာ ရိုက်နည်း<br><span class="hl">တော်လှန်ရေး</span> စတင်ပါပြီ</h1>
+    <p class="sub">ပိုမြန်၊ ပိုလွယ်၊ ပိုပျော်စရာကောင်းတဲ့<br>မြန်မာကီးဘုတ် အသစ်တစ်ခု လာနေပါပြီ။</p>
+    <p class="soon">မျှော်လင့်ထားလိုက်ပါ ✨</p>
+    <p class="name">ကျွန်ုပ်တို့သည် <strong>နိုင်ငံသားကီး</strong> မျိုးဆက်ဖြစ်သည်</p>
+  </main>
+  <footer>
+    © 2026 နိုင်ငံသားကီး · myankey.com · <a href="privacy.html">ကိုယ်ရေးအချက်အလက် မူဝါဒ</a>
+  </footer>
+</body>
+</html>
