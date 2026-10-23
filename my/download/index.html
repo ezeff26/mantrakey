@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>မန်တရာကီး PC ဒေါင်းလုဒ်</title>
 <link rel="icon" href="../images/logo.png" type="image/png">
-<!-- mantrakey.com/my/download → GitHub Releases 최신 설치 파일로 바로 넘긴다.
-     실제 파일은 GitHub Releases에 있고(버전 없는 이름 MantraKey_Setup.exe, ezeff26/mantrakey), 홈페이지 링크는 이 주소만 쓴다.
-     저장소/파일 이름이 바뀌면 아래 두 곳(meta refresh, SETUP_URL)만 고치면 된다. -->
-<meta http-equiv="refresh" content="0; url=https://github.com/ezeff26/mantrakey/releases/latest/download/MantraKey_Setup.exe">
+<!-- mantrakey.com/my/download → 같은 폴더의 설치 파일(MantraKey_Setup.exe)을 바로 받게 한다.
+     2026-10-24: GitHub 주소로 넘기면 일부 브라우저에서 GitHub 로그인 화면이 떠서, 설치 파일을 홈페이지에 직접 둔다
+     (GitHub Release v1.1.0 에도 같은 파일이 있다).
+     새 버전은 이 폴더의 MantraKey_Setup.exe 만 바꿔 올리면 된다(파일 이름이 바뀌면 아래 세 곳: meta refresh, 링크, SETUP_URL). -->
+<meta http-equiv="refresh" content="0; url=MantraKey_Setup.exe">
 <style>
   body { font-family: 'Segoe UI', 'Myanmar Text', sans-serif; text-align: center; padding: 80px 20px; color: #1f2937; background: #f9fafb; }
   a { color: #2563eb; font-weight: 700; }
@@ -16,10 +17,10 @@
 </head>
 <body>
   <p>ဒေါင်းလုဒ် စတင်နေပါပြီ…</p>
-  <p>မစတင်ပါက <a id="link" href="https://github.com/ezeff26/mantrakey/releases/latest/download/MantraKey_Setup.exe">ဒီမှာ နှိပ်ပါ</a></p>
+  <p>မစတင်ပါက <a id="link" href="MantraKey_Setup.exe">ဒီမှာ နှိပ်ပါ</a></p>
   <p><a href="../index.html">← မန်တရာကီး</a></p>
 <script>
-  var SETUP_URL = "https://github.com/ezeff26/mantrakey/releases/latest/download/MantraKey_Setup.exe";
+  var SETUP_URL = "MantraKey_Setup.exe";
   location.replace(SETUP_URL);
 </script>
 </body>
