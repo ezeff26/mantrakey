@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>Naingngantha Key Tutorial</title>
+<style>
+  [hidden] { display: none !important; }
+  html, body {
+    height: 100%; margin: 0; padding: 0; overflow: hidden;
+    background: #6b7280;
+    display: flex; justify-content: center; align-items: flex-end;
+    font-family: -apple-system, "Segoe UI", "Myanmar Text", "Padauk", sans-serif;
+  }
+  #phone-wrap {
+    width: min(100%, 480px); height: 100%;
+    display: flex; flex-direction: column;
+    background: #fff; box-shadow: 0 -5px 40px rgba(0,0,0,0.5);
+    overflow: hidden; position: relative;
+  }
+  @media (max-width: 500px) {
+    #phone-wrap { width: 100%; max-width: 100%; box-shadow: none; }
+    html, body { background: #fff; }
+  }
+
+  #tut-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; background: #f3f4f6; border-bottom: 1px solid #e5e7eb; flex-shrink: 0;
+  }
+  #skip { font-size: 12px; font-weight: 700; color: #6b7280; text-decoration: none; }
+  #dots { display: flex; gap: 6px; }
+  #dots .d { width: 7px; height: 7px; border-radius: 50%; background: #d1d5db; }
+  #dots .d.on  { background: #16a34a; }
+  #dots .d.cur { background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,.25); }
+
+  /* ── 스테이지 (설명/따라쓰기 공용) ── */
+  #stage {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    padding: 10px 10px 8px; box-sizing: border-box; overflow-y: auto;
+  }
+  #tut-title { font-size: 22px; font-weight: 800; color: #111; flex-shrink: 0; margin-bottom: 8px; }
+  #goal { display: flex; align-items: baseline; gap: 9px; margin-bottom: 4px; flex-shrink: 0; }
+  #goal .lbl  { font-size: 12px; font-weight: 700; color: #9ca3af; }
+  #goal .word { font-size: 24px; font-weight: 800; color: #111; }
+  #goal .cnt  { margin-left: auto; font-size: 12px; font-weight: 800; color: #16a34a; }
+  #goal.ok .word { color: #16a34a; }
+
+  #editor {
+    font-size: 30px; text-align: center; color: #111; padding: 6px 0 2px;
+    min-height: 42px; white-space: pre-wrap; word-break: break-all; flex-shrink: 0;
+  }
+  #editor.on::after {
+    content: "|"; display: inline-block; color: #000; margin-left: 1px;
+    animation: blink 1s step-end infinite; font-weight: 100;
+  }
+  @keyframes blink { from, to { color: transparent; } 50% { color: #000; } }
+
+  #diagram { flex-shrink: 0; width: fit-content; margin: 18px auto 2px; }
+  .vrow { display: flex; align-items: center; gap: 12px; margin: 7px 0; font-size: 20px; line-height: 1; }
+  .grp { display: flex; justify-content: center; align-items: center; gap: 4px; width: 108px; box-sizing: border-box; padding: 9px 6px; border-radius: 10px; }
+  .grp.a { background: #eef2f7; }
+  .grp.b { background: #eaf1f8; }
+  .grp .first { color: #111;    font-weight: 800; }
+  .grp .rest  { color: #1aa3e8; font-weight: 800; }
+  #diagram-more { text-align: center; font-size: 40px; font-weight: 900; color: #9ca3af; line-height: 0.5; margin: 2px 0 0; }
+
+  #coach { flex-shrink: 0; text-align: center; padding: 4px 4px 0; }
+  #coach-inner {
+    display: inline-block;
+    font-size: 16px; line-height: 1.7; font-weight: 500; color: #374151;
+  }
+  #coach-inner b { font-weight: 800; color: #111; }
+  #coach.win #coach-inner { color: #16a34a; font-weight: 800; font-size: 18px; }
+
+  .fill { flex: 1; min-height: 8px; }
+  #btnrow { flex-shrink: 0; }
+  .btn {
+    display: block; width: 100%; box-sizing: border-box;
+    padding: 13px; border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 8px;
+  }
+  .btn.primary { background: #16a34a; color: #fff; }
+  .btn.ghost   { background: #eef0f2; color: #374151; }
+
+  /* ── 키보드 (항상 노출) ── */
+  .keyboard-container { position: relative; width: 100%; flex-shrink: 0; line-height: 0; aspect-ratio: 1184 / 646; }
+  .keyboard-container > img.kbd-bg { width: 100%; height: 100%; display: block; pointer-events: none; user-select: none; }
+  .keyboard { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .key {
+    position: absolute; background: transparent; border: none; margin: 0; padding: 0;
+    border-radius: 8px; cursor: pointer; user-select: none;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  }
+  .key:active { background: rgba(0, 90, 200, 0.18); }
+  .key.wrong { animation: shk .3s; }
+  @keyframes shk { 10%,90%{transform:translateX(-1px)} 30%,70%{transform:translateX(2px)} 50%{transform:translateX(-3px)} }
+
+  .ring {
+    position: absolute; border-radius: 11px; pointer-events: none; box-sizing: border-box;
+    border: 3px solid #16a34a;
+  }
+  .ring.pulse { animation: pu 1.25s infinite; }
+  @keyframes pu {
+    0%   { box-shadow: 0 0 0 0 rgba(22,163,74,.55); }
+    70%  { box-shadow: 0 0 0 15px rgba(22,163,74,0); }
+    100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); }
+  }
+</style>
+</head>
+<body>
+<div id="phone-wrap">
+  <div id="tut-header">
+    <div id="dots"></div>
+    <a id="skip" href="mobile_demo.html">ကျော်မည် ▸</a>
+  </div>
+
+  <div id="stage">
+    <div id="tut-title">နိုင်ငံသားကီး · ၁ မိနစ်နဲ့ လေ့လာမယ်</div>
+    <div id="goal" hidden><span class="lbl">လိုက်ရိုက်ပါ</span><span class="word" id="goal-word"></span><span class="cnt" id="goal-cnt"></span></div>
+    <div id="editor" hidden></div>
+    <div id="coach"><span id="coach-inner"></span></div>
+    <div id="diagram" hidden></div>
+    <div class="fill"></div>
+    <div id="btnrow"></div>
+  </div>
+
+  <div class="keyboard-container">
+    <img class="kbd-bg" src="images/mobile.png" alt="">
+    <div class="keyboard" id="kbd"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════════ 키보드 엔진 (mobile_demo.html 과 동일) ══════════════ */
+const NORMAL_BG = "images/mobile.png";
+const PLUS_BG   = "images/how2plus.png";
+
+const consonantGroups = {
+  g_ka:   ["က", "ခ"],            g_nga: ["င", "ဂ", "ဃ"],
+  g_ca:   ["စ", "ဆ"],            g_nnya:["ည", "ဇ", "ဈ"],
+  g_tta:  ["ဋ", "ဌ"],            g_nna: ["ဏ", "ဍ", "ဎ"],
+  g_ta:   ["တ", "ထ"],            g_na:  ["န", "ဒ", "ဓ"],
+  g_pa:   ["ပ", "ဖ"],            g_ma:  ["မ", "ဗ", "ဘ"],
+  g_ya:   ["ယ", "ရ"],            g_tha: ["သ", "လ", "ဝ"],
+  g_a:    ["အ", "ဟ", "ဠ"]
+};
+const multiTapMap = {
+  "i": ["ိ", "ီ", "ဲ"], "j": ["ေ"], "k": ["်", "ံ"], "l": ["ာ", "ါ"],
+  ";": ["း", "့"], "m": ["ှ", "ွ"], ",": ["ု", "ူ"], ".": ["ြ", "ျ"]
+};
+const ZWNJ = "‌";
+const VIRAMA = "္";
+
+const N_COLX = [0.8, 13.2, 25.5, 37.85, 50.25, 62.7, 75.15, 87.5];
+const N_COLW = [11.4, 11.4, 11.4, 11.45, 11.45, 11.4, 11.45, 11.5];
+const N_ROWY = [2.7, 27.45, 52.0];
+const N_ROWH = 21.0;
+const N_LAYOUT = [
+  ["g_nnya", "g_ca",  "g_ta",  "g_pa",  "i",    "k",    "PLUS", "g_tta"],
+  ["g_na",   "g_nga", "g_tha", "g_ka",  "j",    "STEP", "l",    ";"    ],
+  ["g_nna",  "g_a",   "g_ma",  "g_ya",  "m",    ",",    ".",    "BS"   ]
+];
+// 4행 6칸: ! ? , 스페이스 ၊(၊→။→… 순환) 엔터 — 안드로이드 앱 KeyMetrics 하단바와 동일한 칸 구성
+const N_BOTTOM = [
+  { key: "EXCL",  left: 0.93,  width: 8.87  },
+  { key: "QUEST", left: 10.81, width: 9.12  },
+  { key: "COMMA", left: 20.69, width: 11.15 },
+  { key: "SPACE", left: 32.85, width: 34.04 },
+  { key: "STOP",  left: 67.82, width: 11.15 },
+  { key: "ENTER", left: 80.15, width: 18.92 }
+];
+const N_BOTTOM_Y = 76.8, N_BOTTOM_H = 20.9;
+
+const P_COLX = [0.8, 13.2, 25.54, 37.83, 50.28, 62.74, 75.2, 87.6];
+const P_COLW = [11.49, 11.49, 11.6, 11.66, 11.6, 11.55, 11.49, 11.6];
+const P_ROWY = [2.96, 27.73, 52.3, 76.64];
+const P_ROWH = 21.05;
+const P_LAYOUT = [
+  [ {stack:"g_nnya"}, {stack:"g_ca"},  {stack:"g_ta"},  {stack:"g_pa"},  {lit:"ဣ"}, {lit:"ဤ"}, "PLUS",     {stack:"g_tta"} ],
+  [ {stack:"g_na"},   {stack:"g_nga"}, {stack:"g_tha"}, {stack:"g_ka"},  {lit:"ဧ"}, "STEP",    {lit:"ဩ"}, {lit:"ဪ"}       ],
+  [ {stack:"g_nna"},  {stack:"g_a"},   {stack:"g_ma"},  {stack:"g_ya"},  {lit:"ဦ"}, {lit:"ဥ"}, null,       null            ],
+  [ null,             {lit:"ဉ"},       {lit:"၍"},       {lit:"ဿ"},       {lit:"၌"}, {lit:"၎"}, {lit:"၏"}, null            ]
+];
+
+let state = {
+  activeGroup: null, groupIndex: 0, lastTapKey: null, tapIndex: 0,
+  isPlusMode: false, pendingE: false, pendingStep: false, pendingStepE: false
+};
+
+const editor = document.getElementById('editor');
+const bgImg  = document.querySelector('img.kbd-bg');
+function getText() { return editor.textContent; }
+function setText(t) { editor.textContent = t; }
+function scrollToEnd() {}
+
+function plusKid(cell) {
+  if (cell === "PLUS") return "PLUS";
+  if (cell === "STEP") return "STEP";
+  if (cell.stack) return "stack:" + cell.stack;
+  if (cell.lit) return "lit:" + cell.lit;
+  return "";
+}
+
+function makeKey(left, top, width, height, kid, realFn) {
+  const d = document.createElement('div');
+  d.className = 'key';
+  d.style.left = left + '%'; d.style.top = top + '%';
+  d.style.width = width + '%'; d.style.height = height + '%';
+  d.onclick = () => TUT.keyTap(kid, d, realFn);
+  return d;
+}
+
+function render() {
+  const kbd = document.getElementById('kbd');
+  kbd.innerHTML = '';
+  if (state.isPlusMode) {
+    if (!bgImg.src.endsWith(PLUS_BG)) bgImg.src = PLUS_BG;
+    P_LAYOUT.forEach((row, r) => row.forEach((cell, c) => {
+      if (cell === null) return;
+      kbd.appendChild(makeKey(P_COLX[c], P_ROWY[r], P_COLW[c], P_ROWH, plusKid(cell), () => handlePlus(cell)));
+    }));
+  } else {
+    if (!bgImg.src.endsWith(NORMAL_BG)) bgImg.src = NORMAL_BG;
+    N_LAYOUT.forEach((row, r) => row.forEach((key, c) => {
+      kbd.appendChild(makeKey(N_COLX[c], N_ROWY[r], N_COLW[c], N_ROWH, key, () => handleInput(key)));
+    }));
+    N_BOTTOM.forEach(b => {
+      kbd.appendChild(makeKey(b.left, N_BOTTOM_Y, b.width, N_BOTTOM_H, b.key, () => handleInput(b.key)));
+    });
+  }
+  TUT.paintRings();
+}
+
+function handlePlus(cell) {
+  if (cell === "STEP") return;
+  state.isPlusMode = false;
+  if (cell === "PLUS") { render(); return; }
+  if (cell.stack) {
+    const g = consonantGroups[cell.stack];
+    const ch = g ? g[0] : cell.stack;
+    if (state.pendingStep) {
+      let cur = getText();
+      const strip = (state.lastTapKey && [".", "m", "k"].includes(state.lastTapKey)) ? 2 : 1;
+      setText(cur.slice(0, -strip) + VIRAMA + ch + "ေ");
+    } else {
+      setText(getText() + VIRAMA + ch);
+    }
+    if (g) { state.activeGroup = cell.stack; state.groupIndex = 0; }
+    else resetStep();
+    state.lastTapKey = null; state.tapIndex = 0;
+    render(); return;
+  }
+  if (cell.lit) { setText(getText() + cell.lit); resetStep(); render(); }
+}
+
+const BEFORE_E_SET = new Set([0x103C, 0x103B, 0x103E, 0x103D, 0x103A]);
+function analyzePendingStep(text) {
+  const eIdx = text.lastIndexOf("ေ");
+  if (eIdx === -1) return null;
+  const afterE = text.slice(eIdx + 1);
+  const beforePart = text.slice(0, eIdx);
+  let beEnd = beforePart.length;
+  while (beEnd > 0 && BEFORE_E_SET.has(beforePart.codePointAt(beEnd - 1))) beEnd--;
+  return { consonant: beforePart.slice(0, beEnd), beforeE: beforePart.slice(beEnd), afterE };
+}
+
+function handleInput(key) {
+  let t = getText();
+  if (key === "BS") {
+    if (state.pendingStepE) { setText(t.slice(0, -2)); state.pendingStepE = false; state.pendingStep = true; }
+    else if (state.pendingStep) {
+      const ps = analyzePendingStep(t);
+      if (ps && ps.afterE.length > 0) setText(t.slice(0, -1));
+      else if (ps && ps.beforeE.length > 0) setText(ps.consonant + "ေ");
+      else { const eIdx = t.lastIndexOf("ေ"); setText(t.slice(0, eIdx - 1) + "ေ"); state.pendingStep = false; state.pendingE = true; }
+    } else if (state.pendingE) { setText(t.endsWith(ZWNJ + "ေ") ? t.slice(0, -2) : t.slice(0, -1)); state.pendingE = false; }
+    else setText(t.slice(0, -1));
+    state.lastTapKey = null; state.tapIndex = 0;
+    resetStep(); render(); return;
+  }
+  if (key === "PLUS") {
+    if (state.pendingStepE) { setText(t.slice(0, -2)); state.pendingStepE = false; }
+    resetStep(); state.isPlusMode = true; render(); return;
+  }
+  if (key === "SPACE") { setText(getText() + ' ');  resetState(); render(); return; }
+  if (key === "ENTER") { setText(getText() + '\n'); resetState(); render(); return; }
+  // 4행 문장부호: ! ? , 는 그대로 입력. ၊ 키는 연타하면 ၊ → ။ → ... → .... (안드로이드 handleMyanmarStop과 동일)
+  if (key === "EXCL" || key === "QUEST" || key === "COMMA") {
+    setText(getText() + { EXCL: "!", QUEST: "?", COMMA: "," }[key]); resetState(); render(); scrollToEnd(); return;
+  }
+  if (key === "STOP") {
+    const seq = i => i === 0 ? "၊" : i === 1 ? "။" : ".".repeat(i + 1);
+    let cur = getText();
+    if (state.lastTapKey === "STOP") { cur = cur.slice(0, -seq(state.tapIndex).length); state.tapIndex++; }
+    else { resetState(); state.lastTapKey = "STOP"; state.tapIndex = 0; }
+    setText(cur + seq(state.tapIndex)); render(); scrollToEnd(); return;
+  }
+
+  if (key === "STEP") {
+    if (!state.activeGroup) return;
+    const g = consonantGroups[state.activeGroup];
+    state.groupIndex = (state.groupIndex + 1) % g.length;
+    let cur = getText();
+    if (state.pendingStep) setText(cur.slice(0, -2) + g[state.groupIndex] + "ေ");
+    else setText(cur.slice(0, -1) + g[state.groupIndex]);
+    state.lastTapKey = null; state.tapIndex = 0;
+    render(); return;
+  }
+
+  if (state.pendingStepE && key !== "j") {
+    state.pendingStepE = false; state.pendingStep = false; state.pendingE = true; t = getText();
+  }
+
+  if (consonantGroups[key]) {
+    const g = consonantGroups[key];
+    if (state.pendingE) {
+      let base = t.endsWith(ZWNJ + "ေ") ? t.slice(0, -2) : t.slice(0, -1);
+      setText(base + g[0] + "ေ");
+      state.pendingE = false; state.pendingStep = true;
+    } else {
+      setText(t + g[0]);
+      state.pendingStep = false; state.pendingE = false;
+    }
+    state.activeGroup = key; state.groupIndex = 0;
+    state.lastTapKey = null; state.tapIndex = 0;
+    render(); return;
+  }
+
+  if (multiTapMap[key]) {
+    const beforeE_keys = [".", "m"];
+    if (state.lastTapKey === key && state.tapIndex < multiTapMap[key].length - 1) {
+      state.tapIndex++;
+      let val = multiTapMap[key][state.tapIndex];
+      if (state.pendingStep) {
+        let cur = getText();
+        if (beforeE_keys.includes(key)) {
+          const eIdx = cur.lastIndexOf("ေ"); const afterE = cur.slice(eIdx + 1);
+          setText(cur.slice(0, eIdx - 1) + val + "ေ" + afterE);
+        } else setText(cur.slice(0, -1) + val);
+      } else setText(getText().slice(0, -1) + val);
+      if (key !== "j") resetStep();
+    } else {
+      state.lastTapKey = key; state.tapIndex = 0;
+      let val = multiTapMap[key][0];
+      if (key === "j") {
+        setText(getText() + ZWNJ + val); state.pendingE = true; state.pendingStep = false; resetStep();
+      } else if (state.pendingStep) {
+        let cur = getText();
+        if (beforeE_keys.includes(key)) {
+          const eIdx = cur.lastIndexOf("ေ"); const afterE = cur.slice(eIdx + 1);
+          setText(cur.slice(0, eIdx) + val + "ေ" + afterE);
+        } else setText(cur + val);
+        resetStep();
+      } else if (state.pendingE) {
+        let cur = getText();
+        if (beforeE_keys.includes(key)) {
+          let base = cur.endsWith(ZWNJ + "ေ") ? cur.slice(0, -2) : cur.slice(0, -1);
+          setText(base + val + "ေ");
+        } else {
+          setText(cur + val);
+        }
+        state.pendingE = false; state.pendingStep = true;
+      } else {
+        setText(getText() + val); resetStep(); state.pendingStep = false;
+      }
+    }
+    render(); return;
+  }
+
+  setText(t + key); resetState(); render();
+}
+
+function resetStep() { state.activeGroup = null; state.groupIndex = 0; }
+function resetState() {
+  resetStep();
+  state.lastTapKey = null; state.tapIndex = 0;
+  state.isPlusMode = false;
+  state.pendingE = false; state.pendingStep = false; state.pendingStepE = false;
+}
+
+/* ══════════════ 튜토리얼 ══════════════ */
+const VARGA = [
+  { a:["က","ခ"],      b:["င","ဂ","ဃ"] },
+  { a:["စ","ဆ"],      b:["ည","ဇ","ဈ"] },
+  { a:["ဋ","ဌ"],      b:["ဏ","ဍ","ဎ"] },
+  { a:["တ","ထ"],      b:["န","ဒ","ဓ"] },
+  { a:["ပ","ဖ"],      b:["မ","ဗ","ဘ"] },
+  { a:["ယ","ရ"],      b:["သ","လ","ဝ"] },
+  { a:["အ","ဟ","ဠ"], b:[] }
+];
+
+const SCENES = [
+  { type:"explain", diagram:true,
+    highlights:["g_nnya","g_ca","g_ta","g_pa","g_tta","g_na","g_nga","g_tha","g_ka","g_nna","g_a","g_ma","g_ya","STEP"],
+    coach:'ဗျည်းဇယား၏ အတန်းများကို (၁၊ ၂) နှင့် (၅၊ ၃၊ ၄) အုပ်စုနှစ်ခု ခွဲထားသည်။ အပြာရောင် စာလုံးများကို အုပ်စုခလုတ် နှိပ်ပြီး အပြာရောင် ပြောင်းလဲခလုတ် (➤) ဖြင့် ရိုက်ပါ။',
+    btn:"လွယ်ပါတယ်!" },
+
+  { type:"explain", highlights:["i", "k", "j", "l", ";", "m", ",", "."],
+    coach:'သရသံနဲ့ အသံသင်္ကေတတွေက ဗျည်းနဲ့ <b>တွဲတဲ့ ဘက်</b>အလိုက် ခလုတ်တွေမှာ စီထားပါတယ်။<br>အပေါ်တွဲတာ <b>အပေါ်</b>မှာ၊ အောက်တွဲတာ <b>အောက်</b>မှာ။',
+    btn:"ဟုတ်တယ်၊ ကောင်းတဲ့ အကြံ!" },
+
+  { type:"explain", pulse:"PLUS", interactive:["PLUS"],
+    coach:'ဗျည်းဆင့်နဲ့ အထူးအက္ခရာတွေအတွက် <b>ပါဠိဆင့်+ ကီး</b>ကို နှိပ်ပါ။',
+    btn:"နားလည်ပါပြီ" },
+
+  { type:"practice", word:"ဆီ", win:"ရပြီ! ✓&nbsp; ဆီ",
+    steps:[
+      { kid:"g_ca", expect:"စ",  coach:'ဆ ပါတဲ့ <b>စ</b> ကီးကို နှိပ်ပါ။' },
+      { kid:"STEP", expect:"ဆ",  coach:'နောက်စာလုံးကို <b>▶</b> နဲ့ ရွှေ့ပါ။&nbsp; စ → ဆ' },
+      { kid:"i",    expect:"ဆိ", coach:'အပေါ်တွဲတဲ့ သင်္ကေတက <b>အပေါ်</b>မှာ ရှိတယ်။' },
+      { kid:"i",    expect:"ဆီ", coach:'နောက်တစ်ကြိမ် နှိပ်ပါ။&nbsp; ိ → ီ' }
+    ],
+    btns:[{ label:"ရှေ့ဆက်မည်", act:"next" }] },
+
+  { type:"practice", word:"ဒုက္ခ", win:"ရပြီ! ✓&nbsp; ဒုက္ခ",
+    steps:[
+      { kid:"g_na",       expect:"န",     coach:'ဒ ပါတဲ့ <b>န</b> ကီးကို နှိပ်ပါ။' },
+      { kid:"STEP",       expect:"ဒ",     coach:'နောက်စာလုံးကို <b>▶</b> နဲ့ ရွှေ့ပါ။&nbsp; န → ဒ' },
+      { kid:",",          expect:"ဒု",    coach:'အောက်တွဲတဲ့ သင်္ကေတက <b>အောက်</b>မှာ ရှိတယ်။' },
+      { kid:"g_ka",       expect:"ဒုက",   coach:'<b>က</b> ကို နှိပ်ပါ။' },
+      { kid:"PLUS",       checkPlus:true, coach:'ဗျည်းဆင့်ဖို့ <b>ပါဠိဆင့်+ ကီး</b>ကို နှိပ်ပါ။' },
+      { kid:"stack:g_ka", expect:"ဒုက္က", coach:'ခ ပါတဲ့ <b>က</b> ကီးကို နှိပ်ပါ။' },
+      { kid:"STEP",       expect:"ဒုက္ခ", coach:'<b>▶</b> နှိပ်ပြီး ခ သို့ ပြောင်းပါ။' }
+    ],
+    btns:[
+      { label:"နားလည်ပါပြီ။ လွတ်လပ်စွာ စမ်းရေးမယ်။", act:"free" },
+      { label:"သင်ခန်းစာ ပြန်စမည်", act:"restart" }
+    ] }
+];
+
+const goalEl   = document.getElementById('goal');
+const goalWord = document.getElementById('goal-word');
+const goalCnt  = document.getElementById('goal-cnt');
+const diagramEl= document.getElementById('diagram');
+const coachEl  = document.getElementById('coach');
+const coachInner = document.getElementById('coach-inner');
+const btnrowEl = document.getElementById('btnrow');
+
+const TUT = {
+  si: 0, pi: 0, done: false,
+
+  start() {
+    buildDiagram();
+    this.enter();
+  },
+
+  enter() {
+    this.pi = 0; this.done = false;
+    resetState(); setText('');
+    render();
+    this.renderStage();
+    this.buildDots();
+  },
+
+  scene() { return SCENES[this.si]; },
+
+  keyTap(kid, el, realFn) {
+    const sc = this.scene();
+    let allowed;
+    if (sc.type === "practice") {
+      allowed = this.done ? true : (kid === sc.steps[this.pi].kid);
+    } else {
+      allowed = (sc.interactive || []).includes(kid);
+    }
+    if (!allowed) { el.classList.add('wrong'); setTimeout(() => el.classList.remove('wrong'), 300); return; }
+    realFn();
+    if (sc.type === "practice" && !this.done) this.afterTap();
+  },
+
+  afterTap() {
+    const sc = this.scene();
+    const st = sc.steps[this.pi];
+    const ok = st.checkPlus ? state.isPlusMode : (getText() === st.expect);
+    if (!ok) { this.renderStage(); return; }
+    this.pi++;
+    if (this.pi >= sc.steps.length) this.done = true;
+    this.renderStage();
+  },
+
+  btnAct(act) {
+    if (act === "next")    { this.si++; this.enter(); return; }
+    if (act === "free")    { location.href = "mobile_demo.html"; return; }
+    if (act === "restart") { this.si = 0; this.enter(); return; }
+    // explain 씬 기본
+    this.si++; this.enter();
+  },
+
+  renderStage() {
+    const sc = this.scene();
+    const practice = sc.type === "practice";
+
+    diagramEl.hidden = !sc.diagram;
+    goalEl.hidden   = !practice;
+    editor.hidden   = !practice;
+    editor.classList.toggle('on', practice && !this.done);
+
+    if (practice) {
+      goalWord.textContent = sc.word;
+      goalCnt.textContent  = this.done ? "ပြီးပြီ" : (this.pi + 1) + "/" + sc.steps.length;
+      goalEl.classList.toggle('ok', this.done);
+    }
+
+    coachEl.classList.toggle('win', practice && this.done);
+    coachInner.innerHTML = practice
+      ? (this.done ? sc.win : sc.steps[this.pi].coach)
+      : sc.coach;
+
+    // 버튼: 설명 씬은 항상 / 따라쓰기 씬은 완료 후에만 (키보드 위쪽에 노출)
+    btnrowEl.innerHTML = '';
+    const btns = practice ? (this.done ? sc.btns : []) : [{ label: sc.btn, act: "explainNext" }];
+    btns.forEach((b, i) => {
+      const el = document.createElement('button');
+      el.className = 'btn ' + (i === 0 ? 'primary' : 'ghost');
+      el.textContent = b.label;
+      el.onclick = () => this.btnAct(b.act === "explainNext" ? "next" : b.act);
+      btnrowEl.appendChild(el);
+    });
+
+    // 키보드 모드 맞추기 (따라쓰기 5씬의 ＋ 단계 제외하곤 일반)
+    if (!practice && state.isPlusMode) { state.isPlusMode = false; render(); }
+    else this.paintRings();
+  },
+
+  keyRect(kid) {
+    if (state.isPlusMode) {
+      for (let r = 0; r < P_LAYOUT.length; r++) for (let c = 0; c < 8; c++) {
+        const cell = P_LAYOUT[r][c];
+        if (cell !== null && plusKid(cell) === kid) return { l: P_COLX[c], t: P_ROWY[r], w: P_COLW[c], h: P_ROWH };
+      }
+    } else {
+      for (let r = 0; r < N_LAYOUT.length; r++) for (let c = 0; c < 8; c++)
+        if (N_LAYOUT[r][c] === kid) return { l: N_COLX[c], t: N_ROWY[r], w: N_COLW[c], h: N_ROWH };
+      const b = N_BOTTOM.find(x => x.key === kid);
+      if (b) return { l: b.left, t: N_BOTTOM_Y, w: b.width, h: N_BOTTOM_H };
+    }
+    return null;
+  },
+
+  paintRings() {
+    const kbd = document.getElementById('kbd');
+    kbd.querySelectorAll('.ring').forEach(n => n.remove());
+    const add = (kid, cls) => {
+      const rc = this.keyRect(kid);
+      if (!rc) return;
+      const d = document.createElement('div');
+      d.className = 'ring ' + cls;
+      d.style.left = rc.l + '%'; d.style.top = rc.t + '%';
+      d.style.width = rc.w + '%'; d.style.height = rc.h + '%';
+      kbd.appendChild(d);
+    };
+    const sc = this.scene();
+    if (sc.type === "practice") {
+      if (!this.done) add(sc.steps[this.pi].kid, 'pulse');
+    } else {
+      (sc.highlights || []).forEach(k => add(k, 'ring-static'));
+      if (sc.pulse) add(sc.pulse, 'pulse');
+    }
+  },
+
+  buildDots() {
+    const box = document.getElementById('dots');
+    box.innerHTML = '';
+    SCENES.forEach((_, k) => {
+      const d = document.createElement('div');
+      d.className = 'd' + (k < this.si ? ' on' : '') + (k === this.si ? ' cur' : '');
+      box.appendChild(d);
+    });
+  }
+};
+
+const DIAGRAM_VISIBLE_ROWS = 3;
+
+function buildDiagram() {
+  const mk = (arr, cls) => {
+    const g = document.createElement('div'); g.className = 'grp ' + cls;
+    arr.forEach((ch, i) => {
+      const s = document.createElement('span');
+      s.className = i === 0 ? 'first' : 'rest'; s.textContent = ch;
+      g.appendChild(s);
+    });
+    return g;
+  };
+  VARGA.slice(0, DIAGRAM_VISIBLE_ROWS).forEach(row => {
+    const r = document.createElement('div'); r.className = 'vrow';
+    r.appendChild(mk(row.a, 'a'));
+    if (row.b.length) r.appendChild(mk(row.b, 'b'));
+    diagramEl.appendChild(r);
+  });
+  if (VARGA.length > DIAGRAM_VISIBLE_ROWS) {
+    const more = document.createElement('div');
+    more.id = 'diagram-more';
+    more.textContent = '⋮';
+    diagramEl.appendChild(more);
+  }
+}
+
+TUT.start();
+</script>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>Naingngantha Key Mobile Demo</title>
+<style>
+  html, body {
+    height: 100%; margin: 0; padding: 0; overflow: hidden;
+    background: #6b7280;
+    display: flex; justify-content: center; align-items: flex-end;
+  }
+  #phone-wrap {
+    width: min(100%, 480px); height: 100%;
+    display: flex; flex-direction: column;
+    background: #fff;
+    box-shadow: 0 -5px 40px rgba(0,0,0,0.5);
+    overflow: hidden; position: relative;
+  }
+  @media (max-width: 500px) {
+    #phone-wrap { width: 100%; max-width: 100%; box-shadow: none; }
+    html, body { background: #fff; }
+  }
+  #editor {
+    flex: 1; min-height: 0; width: 100%; background: #fff; padding: 20px; font-size: 32px;
+    border: none; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word;
+    overflow-y: auto; outline: none;
+  }
+  #editor::after {
+    content: "|";
+    display: inline-block;
+    color: #000;
+    margin-left: 1px;
+    animation: blink 1s step-end infinite;
+    font-weight: 100;
+  }
+  @keyframes blink {
+    from, to { color: transparent; }
+    50% { color: black; }
+  }
+  .keyboard-container {
+    position: relative; width: 100%; flex-shrink: 0; line-height: 0;
+  }
+  .keyboard-container > img.kbd-bg {
+    width: 100%; display: block; pointer-events: none; user-select: none;
+  }
+  .keyboard {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  }
+  /* 투명 히트 영역 — 배경 이미지(mobile.png / how2plus.png) 위에 얹음 */
+  .key {
+    position: absolute;
+    background: transparent; border: none; margin: 0; padding: 0;
+    border-radius: 8px;
+    cursor: pointer; user-select: none;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  }
+  .key:active { background: rgba(0, 90, 200, 0.22); }
+
+  #action-bar {
+    display: flex; gap: 8px; padding: 8px 10px;
+    background: #e5e7eb; border-bottom: 1px solid #ccc;
+    justify-content: flex-end;
+  }
+  .action-btn {
+    padding: 6px 14px; border-radius: 8px; border: none;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .action-btn.reset { background: #6b7280; color: #fff; }
+  .action-btn.post  { background: #16a34a; color: #fff; }
+  .action-btn.home  { background: #3f6fb8; color: #fff; }
+</style>
+</head>
+<body>
+<div id="phone-wrap">
+<div id="action-bar">
+  <button class="action-btn home" onclick="location.href='index.html'">Home</button>
+  <button class="action-btn reset" onclick="resetEditor()">↺ ပြန်ရှင်းရန်</button>
+  <button class="action-btn post" onclick="goToBoard()">💬 သုံးသပ်ချက် တင်ရန်</button>
+</div>
+<div id="editor"></div>
+<div class="keyboard-container">
+  <img class="kbd-bg" src="images/mobile.png" alt="">
+  <div class="keyboard" id="kbd"></div>
+</div>
+
+<script>
+/* ────────────────────────────────────────────────────────────
+   나잉안다키(Naingngantha Key) 모바일 데모
+   · 자음: 그룹키 + 변환키(▶) 순환   (배경: images/mobile.png)
+   · 플러스: 자음쌓기 / 독립모음 / 특수문자  (배경: images/how2plus.png)
+   라벨은 배경 이미지에 구워져 있고, 여기서는 투명 히트영역만 얹는다.
+   ──────────────────────────────────────────────────────────── */
+
+const NORMAL_BG = "images/mobile.png";
+const PLUS_BG   = "images/how2plus.png";
+
+// 자음 그룹키: 첫 탭 → [0], 이후 ▶ 누를 때마다 다음, 끝에서 [0]으로 순환
+// 3자 그룹은 [5열, 3열, 4열] 순 (5열이 최빈)
+const consonantGroups = {
+  g_ka:   ["က", "ခ"],            g_nga: ["င", "ဂ", "ဃ"],
+  g_ca:   ["စ", "ဆ"],            g_nnya:["ည", "ဇ", "ဈ"],
+  g_tta:  ["ဋ", "ဌ"],            g_nna: ["ဏ", "ဍ", "ဎ"],
+  g_ta:   ["တ", "ထ"],            g_na:  ["န", "ဒ", "ဓ"],
+  g_pa:   ["ပ", "ဖ"],            g_ma:  ["မ", "ဗ", "ဘ"],
+  g_ya:   ["ယ", "ရ"],            g_tha: ["သ", "လ", "ဝ"],
+  g_a:    ["အ", "ဟ", "ဠ"]
+};
+
+// 모음·성조 멀티탭 (동작·순서 모두 기존 아따까야와 동일, 위치만 이동)
+const multiTapMap = {
+  "i": ["ိ", "ီ", "ဲ"], "j": ["ေ"], "k": ["်", "ံ"], "l": ["ာ", "ါ"],
+  ";": ["း", "့"], "m": ["ှ", "ွ"], ",": ["ု", "ူ"], ".": ["ြ", "ျ"]
+};
+
+const ZWNJ = "‌";
+const VIRAMA = "္";
+
+// ── 일반 모드 그리드 (images/mobile.png, 1184×646 실측 % — 2026-09-25 이미지 교체 후 재측정) ──
+const N_COLX = [0.8, 13.2, 25.5, 37.85, 50.25, 62.7, 75.15, 87.5];
+const N_COLW = [11.4, 11.4, 11.4, 11.45, 11.45, 11.4, 11.45, 11.5];
+const N_ROWY = [2.7, 27.45, 52.0];
+const N_ROWH = 21.0;
+
+const N_LAYOUT = [
+  ["g_nnya", "g_ca",  "g_ta",  "g_pa",  "i",    "k",    "PLUS", "g_tta"],
+  ["g_na",   "g_nga", "g_tha", "g_ka",  "j",    "STEP", "l",    ";"    ],
+  ["g_nna",  "g_a",   "g_ma",  "g_ya",  "m",    ",",    ".",    "BS"   ]
+];
+// 4행 6칸: ! ? , 스페이스 ၊(၊→။→… 순환) 엔터 — 안드로이드 앱 KeyMetrics 하단바와 동일한 칸 구성
+const N_BOTTOM = [
+  { key: "EXCL",  left: 0.93,  width: 8.87  },
+  { key: "QUEST", left: 10.81, width: 9.12  },
+  { key: "COMMA", left: 20.69, width: 11.15 },
+  { key: "SPACE", left: 32.85, width: 34.04 },
+  { key: "STOP",  left: 67.82, width: 11.15 },
+  { key: "ENTER", left: 80.15, width: 18.92 }
+];
+const N_BOTTOM_Y = 76.8, N_BOTTOM_H = 20.9;
+
+// ── 플러스 모드 그리드 (images/how2plus.png, 1184×642 실측 %) ──
+const P_COLX = [0.8, 13.2, 25.54, 37.83, 50.28, 62.74, 75.2, 87.6];
+const P_COLW = [11.49, 11.49, 11.6, 11.66, 11.6, 11.55, 11.49, 11.6];
+const P_ROWY = [2.96, 27.73, 52.3, 76.64];
+const P_ROWH = 21.05;
+
+// 각 셀: null(=user/미사용), "PLUS", "STEP"(▶ 순환), {stack:"그룹키"}(◌္ + 그룹 첫 자음), {lit:"문자"}(그대로 삽입)
+// 자음 배열·▶ 위치 모두 일반 모드와 동일한 닌카티 그룹. 4행 특수문자는 우측으로 한 칸 이동(엄지 편의).
+const P_LAYOUT = [
+  [ {stack:"g_nnya"}, {stack:"g_ca"},  {stack:"g_ta"},  {stack:"g_pa"},  {lit:"ဣ"}, {lit:"ဤ"}, "PLUS",     {stack:"g_tta"} ],
+  [ {stack:"g_na"},   {stack:"g_nga"}, {stack:"g_tha"}, {stack:"g_ka"},  {lit:"ဧ"}, "STEP",    {lit:"ဩ"}, {lit:"ဪ"}       ],
+  [ {stack:"g_nna"},  {stack:"g_a"},   {stack:"g_ma"},  {stack:"g_ya"},  {lit:"ဦ"}, {lit:"ဥ"}, null,       null            ],
+  [ null,             {lit:"ဉ"},       {lit:"၍"},       {lit:"ဿ"},       {lit:"၌"}, {lit:"၎"}, {lit:"၏"}, null            ]
+];
+
+let state = {
+  activeGroup: null,   // 현재 ▶ 순환 대상 그룹키 이름
+  groupIndex: 0,       // 그룹 내 현재 인덱스
+  lastTapKey: null,
+  tapIndex: 0,
+  isPlusMode: false,
+  pendingE: false,
+  pendingStep: false,
+  pendingStepE: false
+};
+
+const editor = document.getElementById('editor');
+const bgImg  = document.querySelector('img.kbd-bg');
+function getText() { return editor.innerText; }
+function setText(t) { editor.innerText = t; }
+function scrollToEnd() { editor.scrollTop = editor.scrollHeight; }
+
+function makeKey(left, top, width, height, onTap) {
+  const d = document.createElement('div');
+  d.className = 'key';
+  d.style.left = left + '%'; d.style.top = top + '%';
+  d.style.width = width + '%'; d.style.height = height + '%';
+  d.onclick = onTap;
+  return d;
+}
+
+// ── 렌더 ───────────────────────────────────────────────────
+function render() {
+  const kbd = document.getElementById('kbd');
+  kbd.innerHTML = '';
+
+  if (state.isPlusMode) {
+    if (!bgImg.src.endsWith(PLUS_BG)) bgImg.src = PLUS_BG;
+    P_LAYOUT.forEach((row, r) => {
+      row.forEach((cell, c) => {
+        if (cell === null) return;
+        kbd.appendChild(makeKey(P_COLX[c], P_ROWY[r], P_COLW[c], P_ROWH, () => handlePlus(cell)));
+      });
+    });
+    return;
+  }
+
+  if (!bgImg.src.endsWith(NORMAL_BG)) bgImg.src = NORMAL_BG;
+  N_LAYOUT.forEach((row, r) => {
+    row.forEach((key, c) => {
+      kbd.appendChild(makeKey(N_COLX[c], N_ROWY[r], N_COLW[c], N_ROWH, () => handleInput(key)));
+    });
+  });
+  N_BOTTOM.forEach(b => {
+    kbd.appendChild(makeKey(b.left, N_BOTTOM_Y, b.width, N_BOTTOM_H, () => handleInput(b.key)));
+  });
+}
+
+// ── 플러스 레이어 입력 ──────────────────────────────────────
+// 아따까야와 동일: 플러스 모드에서 자음/독립모음/특수문자를 한 번 누르면 즉시 해제되고 일반 자판으로 복귀.
+// 자음쌓기(◌္ + 그룹 첫 자음) 후에는 그룹이 활성 상태로 남아, 일반 모드의 ▶ 로 쌓은 자음을 순환.
+//   예) ဒု 입력 → က → ➕ → [က ခ] → (일반 모드) ▶  ⇒  ဒုက္ခ
+function handlePlus(cell) {
+  // ▶ 는 일반 모드와 위치를 맞춘 표시용. 플러스에 들어오자마자 누르는 건 오조작이므로 무시.
+  if (cell === "STEP") return;
+
+  state.isPlusMode = false;
+
+  if (cell === "PLUS") { render(); return; }
+
+  if (cell.stack) {
+    const g = consonantGroups[cell.stack];
+    const ch = g ? g[0] : cell.stack;
+    if (state.pendingStep) {
+      let cur = getText();
+      const strip = (state.lastTapKey && [".", "m", "k"].includes(state.lastTapKey)) ? 2 : 1;
+      setText(cur.slice(0, -strip) + VIRAMA + ch + "ေ");
+    } else {
+      setText(getText() + VIRAMA + ch);
+    }
+    if (g) { state.activeGroup = cell.stack; state.groupIndex = 0; }  // ▶ 로 순환 가능하게 유지
+    else resetStep();
+    state.lastTapKey = null; state.tapIndex = 0;
+    render(); scrollToEnd(); return;
+  }
+
+  if (cell.lit) {
+    setText(getText() + cell.lit);
+    resetStep();
+    render(); scrollToEnd();
+  }
+}
+
+// ── pendingStep 분석 (기존과 동일) ─────────────────────────
+const BEFORE_E_SET = new Set([0x103C, 0x103B, 0x103E, 0x103D, 0x103A]);
+function analyzePendingStep(text) {
+  const eIdx = text.lastIndexOf("ေ");
+  if (eIdx === -1) return null;
+  const afterE = text.slice(eIdx + 1);
+  const beforePart = text.slice(0, eIdx);
+  let beEnd = beforePart.length;
+  while (beEnd > 0 && BEFORE_E_SET.has(beforePart.codePointAt(beEnd - 1))) beEnd--;
+  return { consonant: beforePart.slice(0, beEnd), beforeE: beforePart.slice(beEnd), afterE };
+}
+
+// ── 입력 처리 (일반 모드) ──────────────────────────────────
+function handleInput(key) {
+  let t = getText();
+
+  // 백스페이스
+  if (key === "BS") {
+    if (state.pendingStepE) {
+      setText(t.slice(0, -2));
+      state.pendingStepE = false;
+      state.pendingStep = true;
+    } else if (state.pendingStep) {
+      const ps = analyzePendingStep(t);
+      if (ps && ps.afterE.length > 0) {
+        setText(t.slice(0, -1));
+      } else if (ps && ps.beforeE.length > 0) {
+        setText(ps.consonant + "ေ");
+      } else {
+        const eIdx = t.lastIndexOf("ေ");
+        setText(t.slice(0, eIdx - 1) + "ေ");
+        state.pendingStep = false;
+        state.pendingE = true;
+      }
+    } else if (state.pendingE) {
+      setText(t.endsWith(ZWNJ + "ေ") ? t.slice(0, -2) : t.slice(0, -1));
+      state.pendingE = false;
+    } else {
+      setText(t.slice(0, -1));
+    }
+    state.lastTapKey = null; state.tapIndex = 0;
+    resetStep(); render(); scrollToEnd(); return;
+  }
+
+  // 플러스 모드 진입
+  if (key === "PLUS") {
+    if (state.pendingStepE) { setText(t.slice(0, -2)); state.pendingStepE = false; }
+    resetStep();  // 일반 모드에서 물려온 그룹 상태 해제 (플러스 ▶ 오작동 방지)
+    state.isPlusMode = true; render(); return;
+  }
+
+  // 하단바
+  if (key === "SPACE") { setText(getText() + ' ');  resetState(); render(); scrollToEnd(); return; }
+  if (key === "ENTER") { setText(getText() + '\n'); resetState(); render(); scrollToEnd(); return; }
+  // 4행 문장부호: ! ? , 는 그대로 입력. ၊ 키는 연타하면 ၊ → ။ → ... → .... (안드로이드 handleMyanmarStop과 동일)
+  if (key === "EXCL" || key === "QUEST" || key === "COMMA") {
+    setText(getText() + { EXCL: "!", QUEST: "?", COMMA: "," }[key]); resetState(); render(); scrollToEnd(); return;
+  }
+  if (key === "STOP") {
+    const seq = i => i === 0 ? "၊" : i === 1 ? "။" : ".".repeat(i + 1);
+    let cur = getText();
+    if (state.lastTapKey === "STOP") { cur = cur.slice(0, -seq(state.tapIndex).length); state.tapIndex++; }
+    else { resetState(); state.lastTapKey = "STOP"; state.tapIndex = 0; }
+    setText(cur + seq(state.tapIndex)); render(); scrollToEnd(); return;
+  }
+
+  // ▶ 변환키 — 활성 그룹을 다음 문자로 순환
+  if (key === "STEP") {
+    if (!state.activeGroup) return;
+    const g = consonantGroups[state.activeGroup];
+    state.groupIndex = (state.groupIndex + 1) % g.length;
+    let cur = getText();
+    if (state.pendingStep) {
+      setText(cur.slice(0, -2) + g[state.groupIndex] + "ေ");
+    } else {
+      setText(cur.slice(0, -1) + g[state.groupIndex]);
+    }
+    state.lastTapKey = null; state.tapIndex = 0;
+    render(); scrollToEnd(); return;
+  }
+
+  // pendingStepE 상태에서 j 외 다른 키 → 임시 ေ 확정(새 글자 시작)
+  if (state.pendingStepE && key !== "j") {
+    state.pendingStepE = false;
+    state.pendingStep = false;
+    state.pendingE = true;
+    t = getText();
+  }
+
+  // 자음 그룹키
+  if (consonantGroups[key]) {
+    const g = consonantGroups[key];
+    if (state.pendingE) {
+      let base = t.endsWith(ZWNJ + "ေ") ? t.slice(0, -2) : t.slice(0, -1);
+      setText(base + g[0] + "ေ");
+      state.pendingE = false;
+      state.pendingStep = true;
+    } else {
+      setText(t + g[0]);
+      state.pendingStep = false;
+      state.pendingE = false;
+    }
+    state.activeGroup = key;
+    state.groupIndex = 0;
+    state.lastTapKey = null; state.tapIndex = 0;
+    render(); scrollToEnd(); return;
+  }
+
+  // 모음·성조 멀티탭 (기존 로직 그대로)
+  if (multiTapMap[key]) {
+    const beforeE_keys = [".", "m"];
+
+    if (state.lastTapKey === key && state.tapIndex < multiTapMap[key].length - 1) {
+      state.tapIndex++;
+      let val = multiTapMap[key][state.tapIndex];
+      if (state.pendingStep) {
+        let cur = getText();
+        if (beforeE_keys.includes(key)) {
+          const eIdx = cur.lastIndexOf("ေ");
+          const afterE = cur.slice(eIdx + 1);
+          setText(cur.slice(0, eIdx - 1) + val + "ေ" + afterE);
+        } else {
+          setText(cur.slice(0, -1) + val);
+        }
+      } else {
+        setText(getText().slice(0, -1) + val);
+      }
+      if (key !== "j") { resetStep(); }
+    } else {
+      state.lastTapKey = key; state.tapIndex = 0;
+      let val = multiTapMap[key][0];
+
+      if (key === "j") {
+        setText(getText() + ZWNJ + val);
+        state.pendingE = true;
+        state.pendingStep = false;
+        resetStep();
+      } else if (state.pendingStep) {
+        let cur = getText();
+        if (beforeE_keys.includes(key)) {
+          const eIdx = cur.lastIndexOf("ေ");
+          const afterE = cur.slice(eIdx + 1);
+          setText(cur.slice(0, eIdx) + val + "ေ" + afterE);
+        } else {
+          setText(cur + val);
+        }
+        resetStep();
+      } else if (state.pendingE) {
+        let cur = getText();
+        if (beforeE_keys.includes(key)) {
+          let base = cur.endsWith(ZWNJ + "ေ") ? cur.slice(0, -2) : cur.slice(0, -1);
+          setText(base + val + "ေ");
+        } else {
+          setText(cur + val);
+        }
+        state.pendingE = false; state.pendingStep = true;
+      } else {
+        setText(getText() + val);
+        resetStep();
+        state.pendingStep = false;
+      }
+    }
+    render(); scrollToEnd(); return;
+  }
+
+  // 그 외 (도달할 일 없음)
+  setText(t + key);
+  resetState();
+  render(); scrollToEnd();
+}
+
+function resetStep() { state.activeGroup = null; state.groupIndex = 0; }
+function resetState() {
+  resetStep();
+  state.lastTapKey = null; state.tapIndex = 0;
+  state.isPlusMode = false;
+  state.pendingE = false; state.pendingStep = false; state.pendingStepE = false;
+}
+
+function resetEditor() {
+  setText('');
+  resetState();
+  render();
+}
+
+function goToBoard() {
+  const content = getText().trim();
+  if (!content) {
+    alert('မည်သည့်စာမျှ မရေးရသေးပါ။ အတကယဖြင့် တစ်ခုခု ရေးကြည့်ပါ!');
+    return;
+  }
+  const encoded = encodeURIComponent(content);
+  location.href = `board.html?from=mobile&content=${encoded}`;
+}
+
+render();
+</script>
+</div><!-- /phone-wrap -->
+</body>
+</html>

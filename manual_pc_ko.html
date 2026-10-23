@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nangathakey PC 사용설명서</title>
+<link rel="icon" href="images/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans+Myanmar:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f9fafb; --surface:#ffffff; --ink:#111827; --ink-2:#4b5563; --ink-3:#9ca3af;
+  --line:#e5e7eb; --accent:#2563eb; --accent-soft:#eff6ff; --sub:#0ea5e9;
+  --key-yellow:#fdf7a6; --plus:#16a34a; --warn-bg:#fff7ed; --warn-line:#fdba74;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Noto Sans KR','Noto Sans Myanmar',sans-serif;line-height:1.75;word-break:keep-all;overflow-x:hidden}
+.my{font-family:'Noto Sans Myanmar',sans-serif}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent)}
+
+/* nav */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .in{max-width:1160px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar img{height:40px;width:auto}
+.topbar .tag{font-size:13px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;white-space:nowrap}
+
+/* hero */
+.hero{background:linear-gradient(180deg,#9db7e5 0%,#e4ebf7 100%);padding:56px 20px 40px}
+.hero .in{max-width:1160px;margin:0 auto}
+.hero h1{font-size:clamp(28px,5vw,48px);font-weight:900;margin:0 0 8px;letter-spacing:-.02em}
+.hero p{margin:0 0 28px;color:#1f2937;font-size:clamp(15px,2vw,18px)}
+.hero .map{background:rgba(255,255,255,.55);border-radius:20px;padding:clamp(10px,2vw,22px);box-shadow:0 10px 30px rgba(30,64,175,.12)}
+
+/* layout */
+.wrap{max-width:1160px;margin:0 auto;padding:40px 20px 80px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:48px}
+.toc{position:sticky;top:84px;align-self:start;font-size:14px}
+.toc b{display:block;color:var(--ink-3);font-size:12px;letter-spacing:.08em;margin-bottom:8px}
+.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:5px 10px;border-left:2px solid var(--line)}
+.toc a:hover{color:var(--ink)}
+.toc a.on{color:var(--accent);border-left-color:var(--accent);font-weight:700}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;gap:0}.toc{display:none}}
+
+section{padding-bottom:56px;margin-bottom:56px;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+h2{font-size:clamp(22px,3vw,28px);font-weight:900;margin:0 0 6px;letter-spacing:-.01em}
+h2 .n{color:var(--accent);margin-right:8px}
+h3{font-size:18px;margin:32px 0 10px}
+.lead{color:var(--ink-2);margin:0 0 20px}
+p{margin:0 0 14px}
+
+/* keycaps */
+kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.9em;height:1.9em;padding:0 .45em;
+  font:700 .9em/1 'Noto Sans KR',sans-serif;color:var(--ink);background:#fff;border:1px solid #d1d5db;border-bottom-width:3px;border-radius:7px;vertical-align:.05em;text-transform:uppercase}
+kbd.w{min-width:auto}
+.g{font-family:'Noto Sans Myanmar',sans-serif;font-size:1.15em}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.figure{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:16px 0}
+.figure figcaption{font-size:13px;color:var(--ink-3);margin-top:10px;text-align:center}
+
+.note{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:10px;padding:14px 16px;margin:16px 0;font-size:15px}
+.warn{background:var(--warn-bg);border-left:4px solid var(--warn-line);border-radius:10px;padding:14px 16px;margin:16px 0;font-size:15px}
+.note b:first-child,.warn b:first-child{display:block;margin-bottom:2px}
+
+/* tables */
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:15px}
+.tbl th,.tbl td{padding:10px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.tbl th{background:#f3f4f6;font-size:13px;color:var(--ink-2);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .big{font-family:'Noto Sans Myanmar',sans-serif;font-size:24px;line-height:1.5}
+.tbl .big .s{color:var(--sub)}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius)}
+
+/* consonant grid */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ckey{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:12px}
+.ckey kbd{flex:none}
+.ckey .chars{font-family:'Noto Sans Myanmar',sans-serif;font-size:24px;line-height:1.4}
+.ckey .chars .s{color:var(--sub);font-size:19px}
+
+/* sequence strip */
+.seq{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin:14px 0}
+.seq .hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:12px}
+.seq .word{font-family:'Noto Sans Myanmar',sans-serif;font-size:30px;font-weight:700;line-height:1.3}
+.seq .mean{color:var(--ink-2);font-size:14px}
+.steps{display:flex;flex-wrap:wrap;gap:8px}
+.step{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:52px;padding:8px 6px;border-radius:10px;background:#f9fafb;border:1px solid #f0f1f3}
+.step .out{font-family:'Noto Sans Myanmar',sans-serif;font-size:19px;line-height:1.5;min-height:1.5em;white-space:nowrap}
+.step.plus{background:#f0fdf4;border-color:#bbf7d0}
+.step.plus .out{font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--plus);font-weight:700}
+.step.hl{background:#fefce8;border-color:#fde68a}
+.seq .why{font-size:14px;color:var(--ink-2);margin:12px 0 0}
+
+/* two col */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){.two{grid-template-columns:1fr}}
+
+/* key legend grid on HUD */
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px}
+.legend div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}
+.legend strong{display:block;font-size:15px;margin-bottom:2px}
+
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 18px;margin:10px 0}
+.faq summary{cursor:pointer;font-weight:700;padding:14px 0;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:'Q.';color:var(--accent);margin-right:8px}
+.faq details[open] summary{border-bottom:1px solid var(--line);margin-bottom:12px}
+.faq details>div{padding-bottom:14px;font-size:15px;color:#374151}
+
+footer{text-align:center;color:var(--ink-3);font-size:13px;padding:30px 20px 50px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="in">
+    <a href="index.html"><img src="images/logotype.png" alt="Nangathakey"></a>
+    <span class="tag">PC 입력기 사용설명서</span>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="in">
+    <h1>낭아타키 PC 입력기 사용설명서</h1>
+    <p>Windows에서 CapsLock 한 번으로 미얀마어를 입력하는 방법. 자판 배열, 입력 규칙, 요령을 한곳에 정리했습니다.</p>
+    <div class="map"><img src="images/pc_map.png" alt="낭아타키 PC 자판 배열"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="toc" id="toc">
+    <b>목차</b>
+    <a href="#start">1. 시작하기</a>
+    <a href="#onoff">2. 켜기와 끄기</a>
+    <a href="#hud">3. 화면 키맵(HUD)</a>
+    <a href="#consonant">4. 자음과 ▶ 키</a>
+    <a href="#vowel">5. 모음·부호 키</a>
+    <a href="#e">6. ေ 는 먼저 친다</a>
+    <a href="#plus">7. 파찌이+ 키: 겹자음과 특수문자</a>
+    <a href="#punct">8. 문장부호</a>
+    <a href="#digit">9. 숫자</a>
+    <a href="#bs">10. 백스페이스 요령</a>
+    <a href="#practice">11. 따라 쳐 보기</a>
+    <a href="#faq">12. 문제 해결</a>
+    <a href="#summary">13. 한 장 요약</a>
+  </nav>
+
+  <main>
+
+  <!-- 1 -->
+  <section id="start">
+    <h2><span class="n">1</span>시작하기</h2>
+    <p class="lead">설치 과정이 따로 없습니다. 파일을 한 폴더에 두고 실행하면 끝입니다.</p>
+    <div class="card">
+      <ol style="margin:0;padding-left:20px">
+        <li>배포 폴더 안의 파일을 <b>모두 같은 폴더</b>에 둡니다.<br>
+          <span style="color:var(--ink-2);font-size:14px"><code>nangathakey_beta.exe</code>, <code>pc_map.png</code>, <code>pc_plus.png</code>, <code>logo.ico</code> (그림 파일이 없으면 화면 키맵이 뜨지 않습니다)</span></li>
+        <li><code>nangathakey_beta.exe</code>를 실행합니다. 화면 오른쪽 아래 작업표시줄 트레이에 낭아타키 아이콘이 나타납니다.</li>
+        <li>Windows 입력 언어를 <b>영어(English)</b>로 둡니다. 한글 IME 등 다른 입력기가 켜져 있으면 낭아타키가 동작하지 않습니다.</li>
+        <li><kbd class="w">CapsLock</kbd>을 누르면 미얀마어 입력이 시작됩니다.</li>
+      </ol>
+    </div>
+    <div class="note"><b>왜 영어 키보드여야 하나요?</b>낭아타키는 영문 자판 위에 미얀마 문자를 얹는 방식입니다. 한국어 사용자라면 <kbd class="w">한/영</kbd> 전환이 아니라 Windows 입력 언어 자체를 영어로 바꿔 주세요(<kbd class="w">Win</kbd>+<kbd class="w">Space</kbd>).</div>
+  </section>
+
+  <!-- 2 -->
+  <section id="onoff">
+    <h2><span class="n">2</span>켜기와 끄기</h2>
+    <p class="lead">CapsLock이 낭아타키 스위치입니다.</p>
+    <table class="tbl">
+      <tr><th style="width:38%">누르는 키</th><th>동작</th></tr>
+      <tr><td><kbd class="w">CapsLock</kbd></td><td>낭아타키 켜기 / 끄기. 켜면 화면 아래에 키맵이 나타납니다.</td></tr>
+      <tr><td><kbd class="w">Shift</kbd> + <kbd class="w">CapsLock</kbd></td><td>원래의 CapsLock(영문 대문자 고정)이 필요할 때 사용합니다.</td></tr>
+      <tr><td>트레이 아이콘 우클릭</td><td>현재 켜짐/꺼짐 상태 확인, 키맵 자동 표시 설정, 종료(Exit).</td></tr>
+    </table>
+    <p style="margin-top:14px;font-size:14px;color:var(--ink-2)">트레이 메뉴는 실제 사용자를 위해 미얀마어로 표시됩니다. <span class="my">ဖွင့်ထားသည်</span> = 켜짐, <span class="my">ပိတ်ထားသည်</span> = 꺼짐, <span class="my">ကီးဘုတ်ပုံ (HUD) အလိုအလျောက် ပြရန်</span> = 키맵 자동 표시.</p>
+  </section>
+
+  <!-- 3 -->
+  <section id="hud">
+    <h2><span class="n">3</span>화면 키맵(HUD)</h2>
+    <p class="lead">낭아타키가 켜져 있으면 화면 아래쪽 가운데에 자판 그림이 떠서 입력을 도와줍니다.</p>
+    <figure class="figure"><img src="images/pc_map.png" alt="기본 키맵"><figcaption>기본 키맵. 왼손은 자음, 오른손은 모음·부호를 맡습니다.</figcaption></figure>
+    <div class="legend">
+      <div><strong>10초 뒤 자동으로 숨음</strong>입력이 없으면 10초 뒤 키맵이 사라집니다. 아무 키나 치면 다시 나타납니다.</div>
+      <div><strong>스페이스로 다시 부르기</strong>키맵이 숨은 상태에서 누르는 <b>첫 스페이스</b>는 공백을 넣지 않고 키맵만 다시 띄웁니다.</div>
+      <div><strong>언어를 바꾸면 따라 숨음</strong>영어 외의 입력기로 바꾸면 곧바로 숨고, 영어로 돌아오면 다시 나타납니다.</div>
+      <div><strong>자동 표시 끄기</strong>자판을 다 외웠다면 트레이 메뉴에서 자동 표시를 끌 수 있습니다. 설정은 저장됩니다.</div>
+    </div>
+    <div class="note"><b>파찌이+ 키맵은 항상 보입니다</b>자동 표시를 꺼 두어도 <kbd>O</kbd>(파찌이+ 키)를 누르면 파찌이+ 키맵만은 반드시 나타납니다. 파찌이+ 쪽 배열은 자주 쓰지 않아 외우기 어렵기 때문입니다.</div>
+  </section>
+
+  <!-- 4 -->
+  <section id="consonant">
+    <h2><span class="n">4</span>자음과 ▶ 키</h2>
+    <p class="lead">미얀마 자음 33개를 왼손 13개 키에 <b>자음표의 열</b>을 기준으로 묶어 두었습니다. 키를 누르면 그 묶음의 <b>첫 글자</b>(검은 글자)가 나오고, <kbd>K</kbd>(▶)를 누를 때마다 <b style="color:var(--sub)">다음 글자</b>(파란 글자)로 바뀝니다.</p>
+
+    <h3>묶는 방법</h3>
+    <p>자음표의 각 줄에서 <b>[1열, 2열]</b>을 한 키에, <b>[5열, 3열, 4열]</b>을 다른 한 키에 넣었습니다. 마지막 줄의 나머지 자음들은 [ယ ရ], [သ လ ဝ], [အ ဟ ဠ]로 묶었습니다.</p>
+    <div class="tbl-scroll">
+    <table class="tbl" style="text-align:center">
+      <tr><th></th><th>1열</th><th>2열</th><th>3열</th><th>4열</th><th>5열</th></tr>
+      <tr><th>က 줄</th><td class="big" style="background:#eff6ff">က</td><td class="big" style="background:#eff6ff">ခ</td><td class="big" style="background:#fefce8">ဂ</td><td class="big" style="background:#fefce8">ဃ</td><td class="big" style="background:#fefce8">င</td></tr>
+      <tr><th>စ 줄</th><td class="big" style="background:#eff6ff">စ</td><td class="big" style="background:#eff6ff">ဆ</td><td class="big" style="background:#fefce8">ဇ</td><td class="big" style="background:#fefce8">ဈ</td><td class="big" style="background:#fefce8">ည</td></tr>
+      <tr><th>ဋ 줄</th><td class="big" style="background:#eff6ff">ဋ</td><td class="big" style="background:#eff6ff">ဌ</td><td class="big" style="background:#fefce8">ဍ</td><td class="big" style="background:#fefce8">ဎ</td><td class="big" style="background:#fefce8">ဏ</td></tr>
+      <tr><th>တ 줄</th><td class="big" style="background:#eff6ff">တ</td><td class="big" style="background:#eff6ff">ထ</td><td class="big" style="background:#fefce8">ဒ</td><td class="big" style="background:#fefce8">ဓ</td><td class="big" style="background:#fefce8">န</td></tr>
+      <tr><th>ပ 줄</th><td class="big" style="background:#eff6ff">ပ</td><td class="big" style="background:#eff6ff">ဖ</td><td class="big" style="background:#fefce8">ဗ</td><td class="big" style="background:#fefce8">ဘ</td><td class="big" style="background:#fefce8">မ</td></tr>
+    </table>
+    </div>
+    <p style="font-size:14px;color:var(--ink-2);margin-top:10px">파란 칸(1·2열)은 1열 글자가 먼저, 노란 칸(3·4·5열)은 <b>5열 글자가 먼저</b> 나옵니다. 예: <kbd>F</kbd> = က → ခ, <kbd>S</kbd> = င → ဂ → ဃ</p>
+
+    <h3>키별 배치</h3>
+
+    <div class="cgrid">
+      <div class="ckey"><kbd>Q</kbd><span class="chars">ည <span class="s">ဇ ဈ</span></span></div>
+      <div class="ckey"><kbd>W</kbd><span class="chars">စ <span class="s">ဆ</span></span></div>
+      <div class="ckey"><kbd>E</kbd><span class="chars">တ <span class="s">ထ</span></span></div>
+      <div class="ckey"><kbd>R</kbd><span class="chars">ပ <span class="s">ဖ</span></span></div>
+      <div class="ckey"><kbd>P</kbd><span class="chars">ဋ <span class="s">ဌ</span></span></div>
+      <div class="ckey"><kbd>A</kbd><span class="chars">န <span class="s">ဒ ဓ</span></span></div>
+      <div class="ckey"><kbd>S</kbd><span class="chars">င <span class="s">ဂ ဃ</span></span></div>
+      <div class="ckey"><kbd>D</kbd><span class="chars">သ <span class="s">လ ဝ</span></span></div>
+      <div class="ckey"><kbd>F</kbd><span class="chars">က <span class="s">ခ</span></span></div>
+      <div class="ckey"><kbd>Z</kbd><span class="chars">ဏ <span class="s">ဍ ဎ</span></span></div>
+      <div class="ckey"><kbd>X</kbd><span class="chars">အ <span class="s">ဟ ဠ</span></span></div>
+      <div class="ckey"><kbd>C</kbd><span class="chars">မ <span class="s">ဗ ဘ</span></span></div>
+      <div class="ckey"><kbd>V</kbd><span class="chars">ယ <span class="s">ရ</span></span></div>
+    </div>
+
+    <div class="two" style="margin-top:18px">
+      <figure class="figure" style="margin:0"><img src="images/how2step.png" alt="▶ 키 사용법"><figcaption>က 다음에 ▶ = ခ</figcaption></figure>
+      <div>
+        <div class="seq" style="margin-top:0">
+          <div class="hd"><span class="word">ဂ</span><span class="mean">S 묶음의 두 번째 글자</span></div>
+          <div class="steps">
+            <div class="step"><kbd>S</kbd><span class="out">င</span></div>
+            <div class="step hl"><kbd>K</kbd><span class="out">ဂ</span></div>
+          </div>
+        </div>
+        <div class="seq">
+          <div class="hd"><span class="word">ဃ</span><span class="mean">세 번째 글자</span></div>
+          <div class="steps">
+            <div class="step"><kbd>S</kbd><span class="out">င</span></div>
+            <div class="step hl"><kbd>K</kbd><span class="out">ဂ</span></div>
+            <div class="step hl"><kbd>K</kbd><span class="out">ဃ</span></div>
+          </div>
+        </div>
+        <p style="font-size:14px;color:var(--ink-2)">끝 글자에서 ▶를 한 번 더 누르면 첫 글자(င)로 돌아옵니다.</p>
+      </div>
+    </div>
+
+    <h3>외우는 요령</h3>
+    <p>줄마다 첫 글자를 이어 읽으면 미얀마어 문장이 됩니다. 문장 하나로 한 줄을 통째로 외울 수 있습니다.</p>
+    <figure class="figure"><img src="images/mnemonic_light.png" alt="자음 배열 암기 문장"><figcaption>빨간 글자가 각 키의 첫 글자입니다.</figcaption></figure>
+  </section>
+
+  <!-- 5 -->
+  <section id="vowel">
+    <h2><span class="n">5</span>모음·부호 키</h2>
+    <p class="lead">오른손 쪽은 모음과 부호입니다. 한 키에 여러 개가 있으면 <b>같은 키를 연달아 누를 때마다 다음 것으로 바뀝니다</b>.</p>
+    <div class="tbl-scroll">
+    <table class="tbl">
+      <tr><th>키</th><th>1번</th><th>2번</th><th>3번</th><th>설명</th></tr>
+      <tr><td><kbd>U</kbd></td><td class="big">◌ိ</td><td class="big">◌ီ</td><td class="big">◌ဲ</td><td>윗모음</td></tr>
+      <tr><td><kbd>I</kbd></td><td class="big">◌်</td><td class="big">◌ံ</td><td></td><td>아따(받침) / 땅찐</td></tr>
+      <tr><td><kbd>J</kbd></td><td class="big">ေ◌</td><td></td><td></td><td>자음 <b>앞에</b> 먼저 칩니다 (6장)</td></tr>
+      <tr><td><kbd>L</kbd></td><td class="big">◌ာ</td><td class="big">◌ါ</td><td></td><td>아 모음(짧은 꼬리 / 긴 꼬리)</td></tr>
+      <tr><td><kbd>;</kbd></td><td class="big">◌း</td><td class="big">◌့</td><td></td><td>성조 부호</td></tr>
+      <tr><td><kbd>M</kbd></td><td class="big">◌ှ</td><td class="big">◌ွ</td><td></td><td>아래 결합 부호</td></tr>
+      <tr><td><kbd>,</kbd></td><td class="big">◌ု</td><td class="big">◌ူ</td><td></td><td>아랫모음</td></tr>
+      <tr><td><kbd>.</kbd></td><td class="big">◌ြ</td><td class="big">◌ျ</td><td></td><td>둘러싸는 결합 부호</td></tr>
+    </table>
+    </div>
+    <div class="warn"><b>마지막 것을 지나치면?</b>되돌아가지 않고 같은 부호가 <b>하나 더</b> 찍힙니다. 예를 들어 <kbd>L</kbd>을 세 번 누르면 <span class="g">ါ</span> 뒤에 <span class="g">ာ</span>가 또 붙습니다. 이때는 <kbd class="w">BS</kbd>로 지우면 됩니다.</div>
+
+    <div class="seq">
+      <div class="hd"><span class="word">ကား</span><span class="mean">자동차</span></div>
+      <div class="steps">
+        <div class="step"><kbd>F</kbd><span class="out">က</span></div>
+        <div class="step"><kbd>L</kbd><span class="out">ကာ</span></div>
+        <div class="step"><kbd>;</kbd><span class="out">ကား</span></div>
+      </div>
+    </div>
+    <div class="seq">
+      <div class="hd"><span class="word">မြန်မာ</span><span class="mean">미얀마</span></div>
+      <div class="steps">
+        <div class="step"><kbd>C</kbd><span class="out">မ</span></div>
+        <div class="step"><kbd>.</kbd><span class="out">မြ</span></div>
+        <div class="step"><kbd>A</kbd><span class="out">မြန</span></div>
+        <div class="step"><kbd>I</kbd><span class="out">မြန်</span></div>
+        <div class="step"><kbd>C</kbd><span class="out">မြန်မ</span></div>
+        <div class="step"><kbd>L</kbd><span class="out">မြန်မာ</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="e">
+    <h2><span class="n">6</span>ေ 는 먼저 친다</h2>
+    <p class="lead"><span class="g">ေ</span>는 발음은 자음 뒤에 나지만 글자는 자음 <b>앞(왼쪽)</b>에 적힙니다. 낭아타키에서는 <b>눈에 보이는 순서대로</b> <kbd>J</kbd>(<span class="g">ေ</span>)를 먼저 치고 자음을 칩니다. 컴퓨터 내부의 올바른 순서로는 입력기가 알아서 바꿔 저장합니다.</p>
+    <div class="seq">
+      <div class="hd"><span class="word">နေ</span><span class="mean">해, 머물다</span></div>
+      <div class="steps">
+        <div class="step hl"><kbd>J</kbd><span class="out">ေ</span></div>
+        <div class="step"><kbd>A</kbd><span class="out">နေ</span></div>
+      </div>
+    </div>
+    <p>자음 다음에 치는 결합 부호(<kbd>.</kbd> <kbd>M</kbd>)와 ▶ 키도 그대로 통합니다. 입력기가 결합 부호를 <span class="g">ေ</span> 안쪽의 올바른 자리에 넣어 줍니다.</p>
+    <div class="seq">
+      <div class="hd"><span class="word">ကျောင်း</span><span class="mean">학교</span></div>
+      <div class="steps">
+        <div class="step hl"><kbd>J</kbd><span class="out">ေ</span></div>
+        <div class="step"><kbd>F</kbd><span class="out">ကေ</span></div>
+        <div class="step"><kbd>.</kbd><span class="out">ကြေ</span></div>
+        <div class="step"><kbd>.</kbd><span class="out">ကျေ</span></div>
+        <div class="step"><kbd>L</kbd><span class="out">ကျော</span></div>
+        <div class="step"><kbd>S</kbd><span class="out">ကျောင</span></div>
+        <div class="step"><kbd>I</kbd><span class="out">ကျောင်</span></div>
+        <div class="step"><kbd>;</kbd><span class="out">ကျောင်း</span></div>
+      </div>
+    </div>
+    <div class="seq">
+      <div class="hd"><span class="word">ကော်ဖီ</span><span class="mean">커피</span></div>
+      <div class="steps">
+        <div class="step hl"><kbd>J</kbd><span class="out">ေ</span></div>
+        <div class="step"><kbd>F</kbd><span class="out">ကေ</span></div>
+        <div class="step"><kbd>L</kbd><span class="out">ကော</span></div>
+        <div class="step"><kbd>I</kbd><span class="out">ကော်</span></div>
+        <div class="step"><kbd>R</kbd><span class="out">ကော်ပ</span></div>
+        <div class="step"><kbd>K</kbd><span class="out">ကော်ဖ</span></div>
+        <div class="step"><kbd>U</kbd><span class="out">ကော်ဖိ</span></div>
+        <div class="step"><kbd>U</kbd><span class="out">ကော်ဖီ</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section id="plus">
+    <h2><span class="n">7</span>파찌이+ 키: 겹자음과 특수문자</h2>
+    <p class="lead"><kbd>O</kbd>는 <b>파찌이+ 키</b>(<span class="g">ပါဠိဆင့်+ ကီး</span>)입니다. 누르면 다음 한 글자 동안 <b>파찌이+ 키맵</b>으로 바뀝니다. 파찌이+ 키맵은 자동 표시 설정과 상관없이 항상 화면에 나타납니다.</p>
+    <figure class="figure"><img src="images/pc_plus.png" alt="파찌이+ 키맵"><figcaption>파찌이+ 키맵. 자음 키는 겹자음으로, 나머지 키는 특수문자로 바뀝니다.</figcaption></figure>
+
+    <h3>① 겹자음(아래로 쌓기)</h3>
+    <p><kbd>O</kbd> 다음에 자음 키를 누르면 그 자음이 앞 글자 <b>아래에 붙습니다</b>. 붙인 뒤에도 <kbd>K</kbd>(▶)로 묶음 안의 다른 글자로 바꿀 수 있습니다.</p>
+    <div class="seq">
+      <div class="hd"><span class="word">ဒုက္ခ</span><span class="mean">고통</span></div>
+      <div class="steps">
+        <div class="step"><kbd>A</kbd><span class="out">န</span></div>
+        <div class="step"><kbd>K</kbd><span class="out">ဒ</span></div>
+        <div class="step"><kbd>,</kbd><span class="out">ဒု</span></div>
+        <div class="step"><kbd>F</kbd><span class="out">ဒုက</span></div>
+        <div class="step plus"><kbd>O</kbd><span class="out">파찌이+</span></div>
+        <div class="step"><kbd>F</kbd><span class="out">ဒုက္က</span></div>
+        <div class="step hl"><kbd>K</kbd><span class="out">ဒုက္ခ</span></div>
+      </div>
+    </div>
+    <div class="seq">
+      <div class="hd"><span class="word">ကမ္ဘာ</span><span class="mean">세계</span></div>
+      <div class="steps">
+        <div class="step"><kbd>F</kbd><span class="out">က</span></div>
+        <div class="step"><kbd>C</kbd><span class="out">ကမ</span></div>
+        <div class="step plus"><kbd>O</kbd><span class="out">파찌이+</span></div>
+        <div class="step"><kbd>C</kbd><span class="out">ကမ္မ</span></div>
+        <div class="step hl"><kbd>K</kbd><span class="out">ကမ္ဗ</span></div>
+        <div class="step hl"><kbd>K</kbd><span class="out">ကမ္ဘ</span></div>
+        <div class="step"><kbd>L</kbd><span class="out">ကမ္ဘာ</span></div>
+      </div>
+    </div>
+    <div class="seq">
+      <div class="hd"><span class="word">မင်္ဂလာပါ</span><span class="mean">안녕하세요 (낀지 <span class="g">င်္</span> 포함)</span></div>
+      <div class="steps">
+        <div class="step"><kbd>C</kbd><span class="out">မ</span></div>
+        <div class="step"><kbd>S</kbd><span class="out">မင</span></div>
+        <div class="step"><kbd>I</kbd><span class="out">မင်</span></div>
+        <div class="step plus"><kbd>O</kbd><span class="out">파찌이+</span></div>
+        <div class="step"><kbd>S</kbd><span class="out">မင်္င</span></div>
+        <div class="step hl"><kbd>K</kbd><span class="out">မင်္ဂ</span></div>
+        <div class="step"><kbd>D</kbd><span class="out">မင်္ဂသ</span></div>
+        <div class="step hl"><kbd>K</kbd><span class="out">မင်္ဂလ</span></div>
+        <div class="step"><kbd>L</kbd><span class="out">မင်္ဂလာ</span></div>
+        <div class="step"><kbd>R</kbd><span class="out">မင်္ဂလာပ</span></div>
+        <div class="step"><kbd>L</kbd><span class="out">မင်္ဂလာပာ</span></div>
+        <div class="step"><kbd>L</kbd><span class="out">မင်္ဂလာပါ</span></div>
+      </div>
+    </div>
+    <div class="warn"><b>겹자음은 모음보다 먼저</b>겹자음은 자음 덩어리를 만드는 단계에서 붙여야 합니다. <span class="g">ေ</span>나 다른 모음을 이미 붙인 음절 위에 겹자음을 추가하면 글자가 깨질 수 있습니다.</div>
+
+    <h3>② 특수문자</h3>
+    <div class="tbl-scroll">
+    <table class="tbl">
+      <tr><th>파찌이+ 다음 키</th><th>글자</th><th>파찌이+ 다음 키</th><th>글자</th></tr>
+      <tr><td><kbd>U</kbd></td><td class="big">ဣ</td><td><kbd>I</kbd></td><td class="big">ဤ</td></tr>
+      <tr><td><kbd>J</kbd></td><td class="big">ဧ</td><td><kbd>L</kbd></td><td class="big">ဩ</td></tr>
+      <tr><td><kbd>;</kbd></td><td class="big">ဪ</td><td><kbd>M</kbd></td><td class="big">ဦ</td></tr>
+      <tr><td><kbd>,</kbd></td><td class="big">ဥ</td><td><kbd>T</kbd></td><td class="big">ဉ</td></tr>
+      <tr><td><kbd>Y</kbd></td><td class="big">၌</td><td><kbd>G</kbd></td><td class="big">၍</td></tr>
+      <tr><td><kbd>H</kbd></td><td class="big">၎</td><td><kbd>B</kbd></td><td class="big">ဿ</td></tr>
+      <tr><td><kbd>N</kbd></td><td class="big">၏</td><td></td><td></td></tr>
+    </table>
+    </div>
+    <div class="note"><b>지름길</b>보라색 키 6개(<kbd>T</kbd> <kbd>Y</kbd> <kbd>G</kbd> <kbd>H</kbd> <kbd>B</kbd> <kbd>N</kbd>)는 파찌이+ 없이 그냥 눌러도 같은 글자(<span class="g">ဉ ၌ ၍ ၎ ဿ ၏</span>)가 입력됩니다. 기본 키맵에서 빈칸으로 보이는 키들입니다.</div>
+    <p style="font-size:14px;color:var(--ink-2)">파찌이+ 모드를 취소하려면 <kbd>O</kbd>를 한 번 더 누르세요. 파찌이+ 모드에서 ▶ 키는 무시됩니다.</p>
+  </section>
+
+  <!-- 8 -->
+  <section id="punct">
+    <h2><span class="n">8</span>문장부호</h2>
+    <p class="lead"><kbd>/</kbd>와 <kbd>;</kbd>는 <b>바로 앞 글자가 미얀마 글자일 때만</b> 미얀마 부호로 바뀝니다. 공백·숫자·영문·기호 뒤에서는 원래대로 <code>/</code>, <code>;</code>가 입력됩니다.</p>
+    <h3><kbd>/</kbd> : 쉼표 → 마침표 → 말줄임표</h3>
+    <div class="seq">
+      <div class="hd"><span class="word">ကား။</span><span class="mean">미얀마 글자 뒤에서 / 연타</span></div>
+      <div class="steps">
+        <div class="step"><kbd>/</kbd><span class="out">ကား၊</span></div>
+        <div class="step"><kbd>/</kbd><span class="out">ကား။</span></div>
+        <div class="step"><kbd>/</kbd><span class="out">ကား...</span></div>
+        <div class="step"><kbd>/</kbd><span class="out">ကား....</span></div>
+      </div>
+      <p class="why">한 번 = 쉼표 <span class="g">၊</span>, 두 번 = 마침표 <span class="g">။</span>, 세 번 = 말줄임표 <code>...</code>, 그 뒤로 누를 때마다 점이 하나씩 늘어납니다.</p>
+    </div>
+    <div class="note"><b>슬래시가 필요했다면</b>쉼표(<span class="g">၊</span>)가 찍힌 <b>바로 다음</b>에 <kbd class="w">BS</kbd>를 누르면 지워지지 않고 <code>/</code>로 되돌아갑니다. 마침표 단계까지 갔다면 일반 삭제입니다.</div>
+
+    <h3><kbd>;</kbd> : 성조 부호</h3>
+    <p>미얀마 글자 뒤에서는 <span class="g">း</span>(한 번) / <span class="g">့</span>(두 번), 그 외에는 <code>;</code>입니다.</p>
+
+    <h3><kbd>,</kbd> <kbd>.</kbd> : 숫자·기호·영문 뒤에서는 그대로</h3>
+    <p>두 키는 평소에는 결합 부호(<span class="g">ု ူ</span> / <span class="g">ြ ျ</span>)지만, 바로 앞이 <b>숫자·기호·영문</b>이면 그대로 <code>,</code> <code>.</code>이 찍힙니다. 낭아타키를 끄지 않고도 <code>3.5</code>, <code>1,000</code>을 칠 수 있습니다.</p>
+    <table class="tbl">
+      <tr><th>바로 앞 글자</th><th><kbd>,</kbd></th><th><kbd>.</kbd></th></tr>
+      <tr><td>미얀마 글자, 공백, 줄의 처음</td><td class="big">◌ု</td><td class="big">◌ြ</td></tr>
+      <tr><td>숫자, 기호, 영문</td><td><code>,</code></td><td><code>.</code></td></tr>
+    </table>
+  </section>
+
+  <!-- 9 -->
+  <section id="digit">
+    <h2><span class="n">9</span>숫자</h2>
+    <p class="lead">미얀마에서도 가격·전화번호·날짜에는 아라비아 숫자를 주로 쓰기 때문에, 기본은 아라비아 숫자입니다.</p>
+    <table class="tbl">
+      <tr><th>누르는 방법</th><th>결과</th></tr>
+      <tr><td>숫자 키를 <b>짧게</b> 톡</td><td><span style="font-size:22px">1 2 3</span> (아라비아 숫자)</td></tr>
+      <tr><td>숫자 키를 <b>0.35초 이상 꾹</b></td><td class="big">၁ ၂ ၃ <span style="font-family:'Noto Sans KR';font-size:14px;color:var(--ink-2)">(미얀마 숫자)</span></td></tr>
+    </table>
+    <p style="margin-top:14px;font-size:14px;color:var(--ink-2)">꾹 누르고 있어도 미얀마 숫자는 한 번만 입력됩니다. 0~9 모두 같습니다: <span class="g">၀ ၁ ၂ ၃ ၄ ၅ ၆ ၇ ၈ ၉</span></p>
+  </section>
+
+  <!-- 10 -->
+  <section id="bs">
+    <h2><span class="n">10</span>백스페이스 요령</h2>
+    <p class="lead">대부분은 한 글자씩 지워지지만, <span class="g">ေ</span>가 들어간 음절에서는 다시 고치기 쉽도록 지워집니다.</p>
+    <table class="tbl">
+      <tr><th>지금 화면</th><th>BS 후</th><th>설명</th></tr>
+      <tr><td class="big">ကော</td><td class="big">ကေ</td><td>뒤에 붙은 모음부터 지웁니다.</td></tr>
+      <tr><td class="big">ကြေ</td><td class="big">ကေ</td><td>결합 부호를 지웁니다.</td></tr>
+      <tr><td class="big">ကေ</td><td class="big">ေ</td><td>자음만 빠지고 <span class="g">ေ</span>는 남아 있어, 바로 다른 자음을 치면 됩니다.</td></tr>
+      <tr><td class="big">ကား၊</td><td><code>ကား/</code></td><td>쉼표 직후의 BS는 <code>/</code>로 되돌립니다 (8장).</td></tr>
+    </table>
+    <div class="note"><b>조합이 꼬였을 때</b>마우스 클릭, 방향키, Tab, Esc, Ctrl+C/V/Z 등을 누르면 낭아타키의 조합 상태가 초기화됩니다. 이미 입력된 글자는 그대로 남습니다.</div>
+  </section>
+
+  <!-- 11 -->
+  <section id="practice">
+    <h2><span class="n">11</span>따라 쳐 보기</h2>
+    <p class="lead">메모장을 열고 아래 단어를 직접 쳐 보세요.</p>
+    <div class="tbl-scroll">
+    <table class="tbl">
+      <tr><th>단어</th><th>뜻</th><th>키 순서</th></tr>
+      <tr><td class="big">ကား</td><td>자동차</td><td><kbd>F</kbd> <kbd>L</kbd> <kbd>;</kbd></td></tr>
+      <tr><td class="big">နေ</td><td>해</td><td><kbd>J</kbd> <kbd>A</kbd></td></tr>
+      <tr><td class="big">မြန်မာ</td><td>미얀마</td><td><kbd>C</kbd> <kbd>.</kbd> <kbd>A</kbd> <kbd>I</kbd> <kbd>C</kbd> <kbd>L</kbd></td></tr>
+      <tr><td class="big">ကော်ဖီ</td><td>커피</td><td><kbd>J</kbd> <kbd>F</kbd> <kbd>L</kbd> <kbd>I</kbd> <kbd>R</kbd> <kbd>K</kbd> <kbd>U</kbd> <kbd>U</kbd></td></tr>
+      <tr><td class="big">ကျောင်း</td><td>학교</td><td><kbd>J</kbd> <kbd>F</kbd> <kbd>.</kbd> <kbd>.</kbd> <kbd>L</kbd> <kbd>S</kbd> <kbd>I</kbd> <kbd>;</kbd></td></tr>
+      <tr><td class="big">ဒုက္ခ</td><td>고통</td><td><kbd>A</kbd> <kbd>K</kbd> <kbd>,</kbd> <kbd>F</kbd> <kbd>O</kbd> <kbd>F</kbd> <kbd>K</kbd></td></tr>
+      <tr><td class="big">ကမ္ဘာ</td><td>세계</td><td><kbd>F</kbd> <kbd>C</kbd> <kbd>O</kbd> <kbd>C</kbd> <kbd>K</kbd> <kbd>K</kbd> <kbd>L</kbd></td></tr>
+      <tr><td class="big">မင်္ဂလာပါ</td><td>안녕하세요</td><td><kbd>C</kbd> <kbd>S</kbd> <kbd>I</kbd> <kbd>O</kbd> <kbd>S</kbd> <kbd>K</kbd> <kbd>D</kbd> <kbd>K</kbd> <kbd>L</kbd> <kbd>R</kbd> <kbd>L</kbd> <kbd>L</kbd></td></tr>
+    </table>
+    </div>
+    <p style="margin-top:14px">브라우저에서 먼저 연습해 보고 싶다면 <a href="tutorial_pc.html">1분 튜토리얼</a>과 <a href="pc_demo_windows.html">PC 데모</a>를 이용하세요.</p>
+  </section>
+
+  <!-- 12 -->
+  <section id="faq" class="faq">
+    <h2><span class="n">12</span>문제 해결</h2>
+    <details><summary>CapsLock을 눌러도 영문만 입력돼요.</summary><div>Windows 입력 언어가 영어인지 확인하세요. 한국어 IME(한글 모드든 영문 모드든)에서는 동작하지 않습니다. 트레이 아이콘에 마우스를 올려 켜짐 상태인지도 확인해 보세요.</div></details>
+    <details><summary>화면 키맵이 안 보여요.</summary><div>① 10초 동안 입력이 없어 숨은 상태일 수 있습니다. 스페이스를 한 번 누르세요. ② 트레이 메뉴에서 자동 표시가 꺼져 있을 수 있습니다. ③ <code>pc_map.png</code>, <code>pc_plus.png</code>가 exe와 같은 폴더에 있는지 확인하세요.</div></details>
+    <details><summary>스페이스를 눌렀는데 공백이 안 들어가요.</summary><div>키맵이 숨어 있을 때의 첫 스페이스는 키맵을 다시 부르는 데 쓰입니다. 한 번 더 누르면 공백이 입력됩니다.</div></details>
+    <details><summary>숫자를 쳤는데 미얀마 숫자가 나와요.</summary><div>키를 0.35초 이상 누르고 있으면 미얀마 숫자가 됩니다. 조금 더 짧게 톡 눌러 주세요.</div></details>
+    <details><summary>/ 나 ; 를 그대로 쓰고 싶어요.</summary><div>공백 뒤에서 치면 그대로 입력됩니다. 미얀마 글자 바로 뒤라면 <kbd>/</kbd> 다음 <kbd class="w">BS</kbd>로 <code>/</code>를 얻을 수 있습니다. 영문이 많이 섞인 글이라면 CapsLock으로 잠깐 꺼 두는 것이 편합니다.</div></details>
+    <details><summary>소수점이나 천 단위 쉼표는 어떻게 치나요?</summary><div>숫자 바로 뒤에서 <kbd>.</kbd> <kbd>,</kbd>를 누르면 됩니다. 예: <kbd>3</kbd> <kbd>.</kbd> <kbd>5</kbd> → <code>3.5</code> (8장 참고)</div></details>
+    <details><summary>대문자를 연속으로 쓰고 싶어요.</summary><div><kbd class="w">Shift</kbd>+<kbd class="w">CapsLock</kbd>이 원래의 CapsLock 역할을 합니다.</div></details>
+  </section>
+
+  <!-- 13 -->
+  <section id="summary">
+    <h2><span class="n">13</span>한 장 요약</h2>
+    <div class="tbl-scroll">
+    <table class="tbl">
+      <tr><th style="width:34%">키</th><th>하는 일</th></tr>
+      <tr><td><kbd class="w">CapsLock</kbd></td><td>낭아타키 켜기/끄기 (<kbd class="w">Shift</kbd>+<kbd class="w">CapsLock</kbd> = 원래 CapsLock)</td></tr>
+      <tr><td>왼손 자음 키</td><td>자음 묶음의 첫 글자</td></tr>
+      <tr><td><kbd>K</kbd> ▶</td><td>방금 친 자음을 묶음의 다음 글자로</td></tr>
+      <tr><td><kbd>U</kbd> <kbd>I</kbd> <kbd>L</kbd> <kbd>;</kbd> <kbd>M</kbd> <kbd>,</kbd> <kbd>.</kbd></td><td>모음·부호, 연타하면 다음 것으로</td></tr>
+      <tr><td><kbd>J</kbd></td><td><span class="g">ေ</span> — 자음보다 먼저</td></tr>
+      <tr><td><kbd>O</kbd> 파찌이+</td><td>다음 자음을 아래에 겹치기 / 특수문자</td></tr>
+      <tr><td><kbd>T</kbd> <kbd>Y</kbd> <kbd>G</kbd> <kbd>H</kbd> <kbd>B</kbd> <kbd>N</kbd></td><td class="g">ဉ ၌ ၍ ၎ ဿ ၏</td></tr>
+      <tr><td><kbd>/</kbd></td><td><span class="g">၊</span> → <span class="g">။</span> → ... (미얀마 글자 뒤에서만)</td></tr>
+      <tr><td><kbd>,</kbd> <kbd>.</kbd></td><td>숫자·기호·영문 뒤에서는 그대로 <code>,</code> <code>.</code></td></tr>
+      <tr><td>숫자</td><td>톡 = 아라비아, 꾹 = 미얀마</td></tr>
+      <tr><td><kbd class="w">Space</kbd></td><td>공백 (키맵이 숨었을 땐 첫 번째는 키맵 부르기)</td></tr>
+    </table>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<footer>Nangathakey PC 입력기 베타 · 사용설명서 (한국어판)</footer>
+
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a;});
+  if(!('IntersectionObserver' in window))return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){links.forEach(function(a){a.classList.remove('on')});var a=map[e.target.id];if(a)a.classList.add('on');}
+    });
+  },{rootMargin:'-90px 0px -70% 0px'});
+  document.querySelectorAll('main section').forEach(function(s){io.observe(s)});
+})();
+</script>
+</body>
+</html>
