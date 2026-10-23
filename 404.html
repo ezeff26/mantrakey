@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MantraKey</title>
+<!-- 예전 주소(루트에 있던 tutorial_m.html 등)로 들어오면 /my/ 아래 같은 페이지로 보낸다. /my/ 안에서도 없는 페이지면 /my/ 첫 화면으로. -->
+<script>
+(function () {
+  var p = location.pathname;
+  var dest = (p.indexOf("/my/") === 0) ? "/my/" : "/my" + p;
+  location.replace(dest + location.search + location.hash);
+})();
+</script>
+</head>
+<body style="font-family:sans-serif;text-align:center;padding:3rem;">
+<p><a href="/my/">MantraKey →</a></p>
+</body>
+</html>
